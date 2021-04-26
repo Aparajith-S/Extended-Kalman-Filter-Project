@@ -8,7 +8,7 @@
 #include "kalman_filter.h"
 #include "measurement_package.h"
 #include "tools.h"
-
+namespace fusion{
 class FusionEKF {
  public:
   /**
@@ -29,7 +29,7 @@ class FusionEKF {
   /**
    * Kalman Filter update and prediction math lives in here.
    */
-  KalmanFilter ekf_;
+  kalman::KalmanFilter ekf_;
 
  private:
   // check whether the tracking toolbox was initialized or not (first measurement)
@@ -44,6 +44,8 @@ class FusionEKF {
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd H_laser_;
   Eigen::MatrixXd Hj_;
+  float noise_ax;
+	float noise_ay; 
 };
-
+}
 #endif // FusionEKF_H_
