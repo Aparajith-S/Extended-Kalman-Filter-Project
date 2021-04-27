@@ -38,8 +38,8 @@ script:
   - mkdir build
   - cd build
   - if [[ ${TRAVIS_OS_NAME} == "windows" ]]; then
-        cmake ..
-        cmake --build . --config release
+        cmake ..;
+        cmake --build . --config release;
     else
-        cmake .. && make
+        cmake .. && make;
     fi
