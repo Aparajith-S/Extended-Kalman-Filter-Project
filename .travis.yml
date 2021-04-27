@@ -30,6 +30,10 @@ jobs:
         - sudo apt-get update
         - sudo apt-get install crossbuild-essential-armhf libc6:armhf libstdc++6:armhf
         - sudo apt-get install cmake
+        - sudo apt-get install openssl
+        - sudo apt-get install libssl-dev
+        - sudo rm /usr/lib/libuWs.so
+        - ./install-ubuntu.sh
 script:
   - mkdir build
   - cd build
