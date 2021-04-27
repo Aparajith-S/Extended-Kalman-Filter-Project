@@ -1,72 +1,31 @@
 language: cpp
 dist: bionic
-include: &toolchain_amd64
-  sudo: false
-  addons:
-    apt:
-      sources:
-        - ubuntu-toolchain-r-test
-      packages:
-        - gcc
-        - g++
-
-# linux amd64 toolchain
-include: &toolchain_linux_amd64
-  <<: *toolchain_amd64
-  env:
-    - LABEL=amd64_linux
-    - ARCH=amd64
-    - GPP_COMPILER=g++
-    - GCC_COMPILER=gcc
-    
-# cross toolchain (used as a base for multiarch cross-compilation configurations below) 
-include: &toolchain_linux_cross
-  dist: trusty
-  sudo: required # for dpkg --add-architecture locking
-
-# armhf toolchain
-include: &toolchain_linux_armhf
-  <<: *toolchain_linux_cross
-  env:
-    - LABEL=armhf_linux
-    - CROSS_TOOLCHAIN=true
-    - ARCH=armhf
-    - NPM_ARCH=arm
-    - GNU_TRIPLET=arm-linux-gnueabihf
-    - GNU_MULTILIB_TRIPLET=arm-linux-gnueabihf
-    - GPP_COMPILER=arm-linux-gnueabihf-g++
-    - GCC_COMPILER=arm-linux-gnueabihf-gcc
-    - VSCODE_ELECTRON_PLATFORM=arm
-
-# arm64 toolchain
-include: &toolchain_linux_arm64
-  <<: *toolchain_linux_cross
-  env:
-    - LABEL=arm64_linux
-    - CROSS_TOOLCHAIN=true
-    - ARCH=arm64
-    - NPM_ARCH=arm
-    - GNU_TRIPLET=aarch64-linux-gnu
-    - GNU_MULTILIB_TRIPLET=arm-linux-gnueabihf
-    - GPP_COMPILER=aarch64-linux-gnu-g++
-    - GCC_COMPILER=aarch64-linux-gnu-gcc
-    - VSCODE_ELECTRON_PLATFORM=arm
-    
-matrix:
+addons:
+  apt:
+    sources:
+    # add PPAs with more up-to-date toolchains
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.6
+    packages:
+    # install toolchains
+    - gcc-5
+    - g++-5
+    - clang-3.6
+jobs:
   include:
-  - os: linux
-    <<: *toolchain_linux_amd64
-  - os: linux
-    <<: *toolchain_linux_armhf
-  - os: linux
-    <<: *toolchain_linux_arm64
-    
-before_install:
+    - os: linux
+      arch: arm64
+      env: OS=arm64_linux
+    - os: linux
+      arch: amd64
+      env: OS=amd64_linux
+      before_install:
         - sudo dpkg --add-architecture armhf
         - sudo apt-get update
         - sudo apt-get install cmake
         - sudo apt-get install openssl
         - sudo apt-get install libssl-dev
+
 script:
   - if [ -e /usr/lib/libuWs.so ];then
     sudo rm /usr/lib/libuWs.so;
