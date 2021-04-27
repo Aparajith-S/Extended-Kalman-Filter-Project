@@ -1,3 +1,4 @@
+#include "types.h"
 #include <math.h>
 #include <uWS/uWS.h>
 #include <iostream>
@@ -61,7 +62,7 @@ int main() {
           MeasurementPackage meas_package;
           std::istringstream iss(sensor_measurement);
           
-          long long timestamp;
+          type::uint64 timestamp;
 
           // reads first element from the current line
           string sensor_type;
@@ -70,8 +71,8 @@ int main() {
           if (sensor_type.compare("L") == 0) {
             meas_package.sensor_type_ = MeasurementPackage::LASER;
             meas_package.raw_measurements_ = VectorXd(2);
-            float px;
-            float py;
+            type::float32 px;
+            type::float32 py;
             iss >> px;
             iss >> py;
             meas_package.raw_measurements_ << px, py;
@@ -80,9 +81,9 @@ int main() {
           } else if (sensor_type.compare("R") == 0) {
             meas_package.sensor_type_ = MeasurementPackage::RADAR;
             meas_package.raw_measurements_ = VectorXd(3);
-            float ro;
-            float theta;
-            float ro_dot;
+            type::float32 ro;
+            type::float32 theta;
+            type::float32 ro_dot;
             iss >> ro;
             iss >> theta;
             iss >> ro_dot;
@@ -91,10 +92,10 @@ int main() {
             meas_package.timestamp_ = timestamp;
           }
 
-          float x_gt;
-          float y_gt;
-          float vx_gt;
-          float vy_gt;
+          type::float32 x_gt;
+          type::float32 y_gt;
+          type::float32 vx_gt;
+          type::float32 vy_gt;
           iss >> x_gt;
           iss >> y_gt;
           iss >> vx_gt;

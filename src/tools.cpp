@@ -5,6 +5,7 @@
 /// @details : contains the tool class definition for jacobian and rmse computation
 /// @copyright : none reserved. No liabilities. this source code is free to be distributed and copied. use under own resposibility. MIT-License.
 #include "tools.h"
+#include "types.h"
 #include <iostream>
 namespace scientific
 {
@@ -25,7 +26,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   //  * the estimation vector size should equal ground truth vector size
   if((estimations.size() == ground_truth.size())&& estimations.size()!=0)
   {
-for (unsigned int i=0; i < estimations.size(); ++i) {
+for (type::uint32 i=0; i < estimations.size(); ++i) {
 
     VectorXd residual = estimations[i] - ground_truth[i];
 
@@ -48,18 +49,18 @@ for (unsigned int i=0; i < estimations.size(); ++i) {
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
  MatrixXd Hj(3,4);
   // recover state parameters
-  float px = x_state(0);
-  float py = x_state(1);
-  float vx = x_state(2);
-  float vy = x_state(3);
+  type::float32 px = x_state(0);
+  type::float32 py = x_state(1);
+  type::float32 vx = x_state(2);
+  type::float32 vy = x_state(3);
 
   // TODO: YOUR CODE HERE 
-  float sq_term =(px*px + py*py);
-  float sqrt_term = sqrtf(sq_term);
-  float cube_sqrt_term = sqrt_term*sqrt_term*sqrt_term;
+  type::float32 sq_term =(px*px + py*py);
+  type::float32 sqrt_term = sqrtf(sq_term);
+  type::float32 cube_sqrt_term = sqrt_term*sqrt_term*sqrt_term;
   // check division by zero
-  if (fabs(px-0.F) < std::numeric_limits<float>::epsilon() &&
-  fabs(py-0.F) < std::numeric_limits<float>::epsilon())
+  if (fabs(px-0.F) < std::numeric_limits<type::float32>::epsilon() &&
+  fabs(py-0.F) < std::numeric_limits<type::float32>::epsilon())
   {
       std::cout<<"div by 0 error! Both x and y are 0";
   }
