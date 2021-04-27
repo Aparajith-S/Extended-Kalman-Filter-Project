@@ -28,7 +28,9 @@ jobs:
         - sudo apt-get install libssl-dev
 
 script:
-  - sudo rm /usr/lib/libuWs.so
+  - if [ -e /usr/lib/libuWs.so ];then
+    sudo rm /usr/lib/libuWs.so;
+    fi
   - ./install-ubuntu.sh
   - mkdir build
   - cd build
