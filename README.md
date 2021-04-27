@@ -1,6 +1,9 @@
-# Extended Kalman Filter Project Starter Code
-Self-Driving Car Engineer Nanodegree Program
+# Extended Kalman Filter Project 
+Self-Driving Car Engineer Nanodegree Program  
+author : s.aparajith@live.com  
+date: 27.04.2021
 
+---
 In this project a kalman filter will be utilized to estimate the state of a moving object of interest with noisy lidar and radar measurements.
 
 This project involves the Term 2 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases).
@@ -106,3 +109,24 @@ the main entry point of the application
 ---
 
 ## Results
+
+[bothSensors1]: ./Docs/sensor.JPG "fus1"
+[bothSensors2]: ./Docs/sensor2.JPG "fus2"
+[Radar]: ./Docs/onlyRadar.JPG  "radar"
+[Radar2]: ./Docs/onlyradar_2.JPG "radar2"
+[Lidar]: ./Docs/onlyLidar.JPG "lidar1"
+[Lidar2]: ./Docs/onlyLidar2.JPG "lidar2"
+
+
+| Sensors  | dataset 1 | dataset 2 | 
+|:------:|:---------:|:---------:|
+| RADAR + LIDAR |![sensfusi][bothSensors1]| ![sensfusi][bothSensors2]|
+|RADAR|![sensfusi][Radar]| ![sensfusi][Radar2]|
+|LIDAR|![sensfusi][Lidar]| ![sensfusi][Lidar2]|
+
+## Observation
+From the above table of results:
+
+- it was noted from the RMSE readings the LIDAR seems to fare better than the RADAR measurements 
+- However, for x component of the velocity seems to fare a bit better in the RADAR case than the LIDAR case 
+- With the fusioning algorithm, with both the RADAR and LIDAR measurements the RMSE of both positions and velocities were within the [.11, .11, 0.52, 0.52] margin as expected in the rubrik.
