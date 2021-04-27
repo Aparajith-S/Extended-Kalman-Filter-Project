@@ -115,10 +115,10 @@ int main() {
 
           VectorXd estimate(4);
 
-          double p_x = fusionEKF.ekf_.modifyVectorX()(0);
-          double p_y = fusionEKF.ekf_.modifyVectorX()(1);
-          double v1  = fusionEKF.ekf_.modifyVectorX()(2);
-          double v2 = fusionEKF.ekf_.modifyVectorX()(3);
+          double p_x = fusionEKF.getVectorX()(0);
+          double p_y = fusionEKF.getVectorX()(1);
+          double v1  = fusionEKF.getVectorX()(2);
+          double v2 = fusionEKF.getVectorX()(3);
 
           estimate(0) = p_x;
           estimate(1) = p_y;
