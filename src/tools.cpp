@@ -1,6 +1,13 @@
+/// @brief mathematical computation tools.
+/// @file : tools.cpp
+/// @author : s.aparajith@live.com
+/// @date : 20/4/2021
+/// @details : contains the tool class definition for jacobian and rmse computation
+/// @copyright : none reserved. No liabilities. this source code is free to be distributed and copied. use under own resposibility. MIT-License.
 #include "tools.h"
 #include <iostream>
-
+namespace scientific
+{
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using std::vector;
@@ -63,4 +70,5 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
        (py*(vx*py-vy*px))/cube_sqrt_term,(px*(vy*px-vx*py))/cube_sqrt_term, px/sqrt_term,py/sqrt_term;
   }
   return Hj;
+}
 }

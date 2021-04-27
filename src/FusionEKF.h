@@ -1,6 +1,13 @@
+/// @brief fusioning algorithm class.
+/// @file : FusionEKF.h
+/// @author : s.aparajith@live.com
+/// @date : 20/4/2021
+/// @details : contains the class definition for a sensor fusion algorithm using EKF 
+/// @copyright : none reserved. No liabilities. this source code is free to be distributed and copied. use under own resposibility. MIT-License.
+
 #ifndef FusionEKF_H_
 #define FusionEKF_H_
-
+#include "types.h"
 #include <fstream>
 #include <string>
 #include <vector>
@@ -11,41 +18,36 @@
 namespace fusion{
 class FusionEKF {
  public:
-  /**
-   * Constructor.
-   */
-  FusionEKF();
+  ///Constructor.
+  FusionEKF(void);
+  ///Destructor.
+  virtual ~FusionEKF(void);
 
-  /**
-   * Destructor.
-   */
-  virtual ~FusionEKF();
-
-  /**
-   * Run the whole flow of the Kalman Filter from here.
-   */
+  ///@brief Run the whole flow of the Kalman Filter from here.
+  ///@param measurement_pack : gets raw measurements with info whether they are Lidar or radar
   void ProcessMeasurement(const MeasurementPackage &measurement_pack);
-
-  /**
-   * Kalman Filter update and prediction math lives in here.
-   */
-  kalman::KalmanFilter ekf_;
+  
+  ///@brief gets vector x for display purposes on the sim.
+  Eigen::VectorXd const & getVectorX(void)const;
 
  private:
-  // check whether the tracking toolbox was initialized or not (first measurement)
+  ///@brief Kalman Filter update and prediction math lives in here.
+  kalman::KalmanFilter ekf_;
+
+  /// @brief check whether the tracking toolbox was initialized or not (first measurement)
   bool is_initialized_;
 
-  // previous timestamp
-  long long previous_timestamp_;
+  type::uint64 previous_timestamp_;
 
   // tool object used to compute Jacobian and RMSE
-  Tools tools;
+  scientific::Tools tools;
   Eigen::MatrixXd R_laser_;
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd H_laser_;
   Eigen::MatrixXd Hj_;
-  float noise_ax;
-	float noise_ay; 
+  type::float32 noise_ax;
+	type::float32 noise_ay; 
+  type::float32 dt_stored;
 };
 }
 #endif // FusionEKF_H_

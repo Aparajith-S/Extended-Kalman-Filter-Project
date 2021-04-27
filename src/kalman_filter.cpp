@@ -1,14 +1,20 @@
+/// @brief kalman filter class definition
+/// @file : kalman_filter.cpp
+/// @author : s.aparajith@live.com
+/// @date : 20/4/2021
+/// @details : contains the class definition for extended kalman filter and kalman filter. 
+/// @copyright : none reserved. No liabilities. this source code is free to be distributed and copied. use under own resposibility. MIT-License.
+
 #include "kalman_filter.h"
 #include "tools.h"
+#include "types.h"
 #include <limits.h>
 namespace kalman{
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-
-/* 
- * Please note that the Eigen library does not initialize 
- *   VectorXd or MatrixXd objects with zeros upon creation.
- */
+/// @note
+/// The Eigen library does not initialize 
+/// VectorXd or MatrixXd objects with zeros upon creation.
 
 KalmanFilter::KalmanFilter(VectorXd const & x_in,
   MatrixXd const & P_in,
@@ -43,24 +49,24 @@ void KalmanFilter::Update(const VectorXd &z) {
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-float px = x_[0];
-  float py = x_[1];
-  float vx = x_[2];
-  float vy = x_[3];
+type::float32 px = x_[0];
+  type::float32 py = x_[1];
+  type::float32 vx = x_[2];
+  type::float32 vy = x_[3];
 
   //Checking the value is not zero
-  if(px == 0. && py == 0.)
+  if(px == 0.F && py == 0.F)
     return;
   
-  float rho = sqrt(px*px + py*py);
-  float theta = atan2(py, px);
+  type::float32 rho = sqrtf(px*px + py*py);
+  type::float32 theta = atan2f(py, px);
   
   //Checking the value is not zero
-  if (rho < std::numeric_limits<float>::epsilon()) 
+  if (rho < std::numeric_limits<type::float32>::epsilon()) 
   {
-    rho = std::numeric_limits<float>::epsilon() ;
+    rho = std::numeric_limits<type::float32>::epsilon() ;
   } 
-  float rho_dot = (px*vx + py*vy) / rho;
+  type::float32 rho_dot = (px*vx + py*vy) / rho;
   
   //Finding h(x)
   VectorXd h = VectorXd(3); // h(x_)
@@ -84,9 +90,9 @@ void KalmanFilter::KfCommonUpdates(const Eigen::VectorXd &y)
   MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
   MatrixXd K = PHt * Si;
-  //new estimate
+  //new estimates
   x_ = x_ + (K * y);
-  long x_size = x_.size();
+  type::uint32 x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 }
@@ -111,11 +117,11 @@ Eigen::VectorXd & KalmanFilter::modifyVectorX(void)
 {
   return this->x_;
 }
-Eigen::VectorXd KalmanFilter::getX(void)const
+Eigen::VectorXd const & KalmanFilter::getX(void)const
 {
   return x_;
 }
-Eigen::MatrixXd KalmanFilter::getP(void)const
+Eigen::MatrixXd const & KalmanFilter::getP(void)const
 {
   return P_;
 }

@@ -2,6 +2,9 @@
 #include <iostream>
 #include "Eigen/Dense"
 #include "tools.h"
+#include "types.h"
+// make this one to get console output.
+#define DEBUG (0)
 namespace fusion{
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -9,12 +12,12 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-
 /// @brief Constructor.
 FusionEKF::FusionEKF():
 ekf_(VectorXd(4),
 MatrixXd(4, 4),
-MatrixXd(4, 4)) {
+MatrixXd(4, 4)),
+dt_stored(0.F) {
   is_initialized_ = false;
 
   previous_timestamp_ = 0;
@@ -55,7 +58,7 @@ MatrixXd(4, 4)) {
 	// set the acceleration noise components
 	noise_ax = 9;
 	noise_ay = 9; 
-  //Q and R inits dont matter much as they will be replaced later.
+  //Q and R inits dont matter much now as they will be replaced later in process fcn.
   ekf_.Init(x_in,
   P_in,
   F_in,
@@ -68,23 +71,26 @@ MatrixXd(4, 4)) {
 /// Destructor.
 FusionEKF::~FusionEKF() {}
 
-void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
+void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) 
+{
   //Initialization
   if (!is_initialized_) {
     // Initialize the state ekf_.x_ with the first measurement.
     // Create the covariance matrix.
     //You'll need to convert radar from polar to cartesian coordinates.
     // first measurement
+    #if DEBUG == 1
     cout << "EKF: " << endl;
+    #endif
     ekf_.modifyVectorX() = VectorXd(4);
     ekf_.modifyVectorX() << 1, 1, 1, 1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       //  Convert radar from polar to cartesian coordinates 
       //  and initialize state.
-			float ro = measurement_pack.raw_measurements_(0);
-			float phi = measurement_pack.raw_measurements_(1);
-			float roDot = measurement_pack.raw_measurements_(2);
+			type::float32 ro = measurement_pack.raw_measurements_(0);
+			type::float32 phi = measurement_pack.raw_measurements_(1);
+			type::float32 roDot = measurement_pack.raw_measurements_(2);
 			ekf_.modifyVectorX()(0) = ro     * cos(phi);
 			ekf_.modifyVectorX()(1) = ro     * sin(phi);
 			ekf_.modifyVectorX()(2) = roDot  * cos(phi);
@@ -108,13 +114,16 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   //Time is measured in seconds.
   //Update the process noise covariance matrix.
   //Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
-  constexpr float kConvert2secs =1000000.0F;
-  float dt = (measurement_pack.timestamp_ - previous_timestamp_) / kConvert2secs;
-	previous_timestamp_ = measurement_pack.timestamp_;
+  constexpr type::float32 kConvert2secs =1000000.0F;
+  type::float32 dt = (measurement_pack.timestamp_ - previous_timestamp_) / kConvert2secs;
   
-  float dt_2 = dt * dt;
-	float dt_3 = dt_2 * dt;
-	float dt_4 = dt_3 * dt;
+	previous_timestamp_ = measurement_pack.timestamp_;
+  //check if dt has changed, otherwise no need to compute the Q matrix ; saves time.
+  if(fabs(dt - dt_stored) < std::numeric_limits<type::float32>::epsilon())
+  {
+  type::float32 dt_2 = dt * dt;
+	type::float32 dt_3 = dt_2 * dt;
+	type::float32 dt_4 = dt_3 * dt;
 
 	// Modify the F matrix so that the time is integrated
   ekf_.modifyFmatrix()(0, 2) = dt;
@@ -126,7 +135,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
 		dt_3 / 2 * noise_ax, 0, dt_2*noise_ax, 0,
 		0, dt_3 / 2 * noise_ay, 0, dt_2*noise_ay;
-  
+  }
+  //update stored dt
+  dt_stored = dt;
   ekf_.Predict();
 
    //  Update
@@ -134,7 +145,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
    //- Update the state and covariance matrices.
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
-    Tools tools;
 		Hj_ = tools.CalculateJacobian(ekf_.getX());
 		ekf_.modifyHmatrix() = Hj_;
 		ekf_.modifyRmatrix() = R_radar_;
@@ -146,9 +156,17 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		ekf_.modifyRmatrix() = R_laser_;
 		ekf_.Update(measurement_pack.raw_measurements_);
   }
-
-  // print the output
+  #if DEBUG == 1
+  // print the output only if needed. otherwise it is an impediment to performance.
   cout << "x_ = " << ekf_.getX() << endl;
   cout << "P_ = " << ekf_.getP() << endl;
+  #endif
+}
+
+///@brief gets vector x for display purposes on the sim.
+///@return constant reference to the internal state of ekf.  
+Eigen::VectorXd const & FusionEKF::getVectorX(void) const
+{
+  return this->ekf_.getX();
 }
 }

@@ -1,3 +1,10 @@
+/// @brief kalman filter class.
+/// @file : kalman_filter.h
+/// @author : s.aparajith@live.com
+/// @date : 20/4/2021
+/// @details : contains the class declaration for extended kalman filter and kalman filter. 
+/// @copyright : none reserved. No liabilities. this source code is free to be distributed and copied. use under own resposibility. MIT-License.
+
 #ifndef KALMAN_FILTER_H_
 #define KALMAN_FILTER_H_
 
@@ -29,7 +36,6 @@ class KalmanFilter {
   ///
   ///Prediction Predicts the state and the state covariance
   ///using the process model
-  ///@param delta_T Time between k and k+1 in s
   ///
   void Predict();
 
@@ -53,8 +59,8 @@ class KalmanFilter {
   Eigen::MatrixXd & modifyHmatrix(void);
   /// @brief expose the member for update
   Eigen::VectorXd & modifyVectorX(void);
-  Eigen::VectorXd getX(void)const;
-  Eigen::MatrixXd getP(void)const;
+  Eigen::VectorXd const & getX(void)const;
+  Eigen::MatrixXd const & getP(void)const;
 private:
   /// @brief state vector
   Eigen::VectorXd x_;

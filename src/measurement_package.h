@@ -2,7 +2,7 @@
 #define MEASUREMENT_PACKAGE_H_
 
 #include "Eigen/Dense"
-
+#include "types.h"
 class MeasurementPackage {
  public:
   enum SensorType{
@@ -10,7 +10,7 @@ class MeasurementPackage {
     RADAR
   } sensor_type_;
 
-  long long timestamp_;
+  type::uint64 timestamp_;
 
   Eigen::VectorXd raw_measurements_;
 };
