@@ -42,3 +42,4 @@ script:
         cmake --build . --config release
     else
         cmake .. && make
+    fi
