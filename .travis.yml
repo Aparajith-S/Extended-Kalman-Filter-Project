@@ -19,12 +19,6 @@ jobs:
     - os: linux
       arch: amd64
       env: OS=amd64_linux
-    - os: windows
-      arch: amd64
-      env: OS=windows
-    - os: osx
-      arch: amd64
-      env: OS=osx
       before_install:
         - sudo dpkg --add-architecture armhf
         - sudo apt-get update
@@ -32,14 +26,10 @@ jobs:
         - sudo apt-get install cmake
         - sudo apt-get install openssl
         - sudo apt-get install libssl-dev
-        - sudo rm /usr/lib/libuWs.so
-        - ./install-ubuntu.sh
+
 script:
+  - sudo rm /usr/lib/libuWs.so
+  - ./install-ubuntu.sh
   - mkdir build
   - cd build
-  - if [[ ${TRAVIS_OS_NAME} == "windows" ]]; then
-        cmake ..;
-        cmake --build . --config release;
-    else
-        cmake .. && make;
-    fi
+  - cmake .. && make
