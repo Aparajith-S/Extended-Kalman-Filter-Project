@@ -1,7 +1,10 @@
 # Extended Kalman Filter Project 
 Self-Driving Car Engineer Nanodegree Program  
 author : s.aparajith@live.com  
-date: 27.04.2021
+date: 27.04.2021  
+
+build matrix : arm64 and amd64 on linux 20.04  
+[![Build Status](https://travis-ci.org/Aparajith-S/Extended-Kalman-Filter-Project.svg?branch=master)](https://travis-ci.org/Aparajith-S/Extended-Kalman-Filter-Project)
 
 ---
 In this project a kalman filter will be utilized to estimate the state of a moving object of interest with noisy lidar and radar measurements.
