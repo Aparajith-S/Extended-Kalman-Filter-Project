@@ -6,12 +6,12 @@ addons:
     sources:
     # add PPAs with more up-to-date toolchains
     - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-10
+    - llvm-toolchain-precise
     packages:
     # install toolchains
-    - gcc-5
-    - g++-5
-    - clang-11
+    - gcc
+    - g++
+    - clang
 jobs:
   include:
     - os: linux
